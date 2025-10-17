@@ -4,40 +4,124 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>薪水小偷</title>
-  <meta name="theme-color" content="#ffcc00" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icon-192.png" />
+
+  <!-- ✅ PWA 支援 -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffcc00">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="薪水小偷">
+
   <style>
-    /* 你的原始 CSS 保留不變 */
-    body { font-family: "Segoe UI", sans-serif; background: #fffdf5; color: #333; padding: 1em; margin: 0; display: flex; flex-direction: column; align-items: center; }
-    h1 { font-size: 3em; font-weight: bold; text-align: center; margin-bottom: 0.3em; }
-    .total { font-size: 2em; font-weight: bold; margin-bottom: 1em; text-align: center; }
-    label, input, button { font-size: 1.2em; margin: 0.5em 0; }
-    input { padding: 0.4em; width: 100%; max-width: 300px; box-sizing: border-box; }
-    button { padding: 0.6em 1.2em; background-color: #ffcc00; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-    button:hover { background-color: #ffdb4d; }
-    .reason-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5em; margin: 0.1em 0; }
-    .reason-buttons button { background-color: #eee; border: 1px solid #aaa; border-radius: 10px; }
-    .reason-buttons button.selected { background-color: #ffd966; border-color: #ff9900; }
-    .metrics { text-align: left; margin: 1em 0; }
-    .metrics p { font-size: 2em; font-weight: bold; margin: 0.3em 0; }
-    .log { max-width: 500px; margin: 2em auto; font-size: 1em; text-align: center; }
-    .log h3 { font-size: 1.4em; font-weight: bold; margin-bottom: 0.5em; }
-    .log ul { padding-left: 0; list-style: none; }
-    .log li { margin-bottom: 0.5em; }
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #fffdf5;
+      color: #333;
+      padding: 1em;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 3em;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 0.3em;
+    }
+    .total {
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 1em;
+      text-align: center;
+    }
+    label, input, button {
+      font-size: 1.2em;
+      margin: 0.5em 0;
+    }
+    input {
+      padding: 0.4em;
+      width: 100%;
+      max-width: 300px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 0.6em 1.2em;
+      background-color: #ffcc00;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #ffdb4d;
+    }
+    .reason-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5em;
+      margin: 0.1em 0;
+    }
+    .reason-buttons button {
+      background-color: #eee;
+      border: 1px solid #aaa;
+      border-radius: 10px;
+    }
+    .reason-buttons button.selected {
+      background-color: #ffd966;
+      border-color: #ff9900;
+    }
+    .metrics {
+      text-align: left;
+      margin: 1em 0;
+    }
+    .metrics p {
+      font-size: 2em;
+      font-weight: bold;
+      margin: 0.3em 0;
+    }
+    .log {
+      max-width: 500px;
+      margin: 2em auto;
+      font-size: 1em;
+      text-align: center;
+    }
+    .log h3 {
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+    }
+    .log ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .log li {
+      margin-bottom: 0.5em;
+    }
     @media (max-width: 600px) {
-      h1 { font-size: 1.8em; }
-      .metrics p { font-size: 1.2em; }
-      button { font-size: 1em; }
+      h1 {
+        font-size: 1.8em;
+      }
+      .metrics p {
+        font-size: 1.2em;
+      }
+      button {
+        font-size: 1em;
+      }
     }
   </style>
 </head>
+
 <body>
-  <!-- 你的原始 HTML 保留不變 -->
   <h1>👻 薪水小偷</h1>
+  <br>
   <div class="total">💰 累計總金額：NT$<span id="total">0.00</span></div>
+
   <label>月薪（NT$）：<input type="number" id="salary" /></label>
   <button id="start">開始偷懶</button>
+
   <div>
     <p>偷懶理由：</p>
     <div class="reason-buttons">
@@ -47,27 +131,207 @@
       <button id="customReasonBtn">✏️ 其他</button>
     </div>
   </div>
+
   <div class="metrics">
     <p>⏱️ 時間：<span id="time">0.0</span> 秒</p>
     <p>💸 金額：NT$<span id="amount">0.00</span></p>
     <p>📋 理由：<span id="reasonDisplay"></span></p>
   </div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:0.5em;">
+
+  <!-- 匯入 / 匯出 併排 -->
+  <div style="display:flex;gap:0.5em;">
+    <button id="import">📥 匯入資料</button>
+    <button id="export">📤 匯出資料</button>
+  </div>
+
+  <!-- 清除資料 獨立一行 -->
   <button id="clear">🗑️ 清除資料</button>
+
+</div>
+
   <div class="log">
     <h3>偷懶紀錄</h3>
     <ul id="logList"></ul>
   </div>
 
   <script>
-    // 你的原始 JS 保留不變（略）
-  </script>
+    let selectedReason = "";
+    let timer = null;
+    let elapsedMs = 0;
+    let perMs = 0;
+    let isRunning = false;
+    let totalEarned = 0;
 
-  <!-- ✅ PWA Service Worker 註冊 -->
-  <script>
+    const salaryInput = document.getElementById("salary");
+    const startBtn = document.getElementById("start");
+    const clearBtn = document.getElementById("clear");
+    const importBtn = document.getElementById("import");
+    const exportBtn = document.getElementById("export");
+    const timeDisplay = document.getElementById("time");
+    const amountDisplay = document.getElementById("amount");
+    const totalDisplay = document.getElementById("total");
+    const reasonDisplay = document.getElementById("reasonDisplay");
+    const reasonButtons = document.querySelectorAll(".reason-buttons button[data-reason]");
+    const customReasonBtn = document.getElementById("customReasonBtn");
+    const logList = document.getElementById("logList");
+
+    // ✅ 載入儲存資料
+    window.addEventListener("load", () => {
+      const savedSalary = localStorage.getItem("savedSalary");
+      if (savedSalary) salaryInput.value = savedSalary;
+      const savedTotal = localStorage.getItem("totalEarned");
+      if (savedTotal) {
+        totalEarned = parseFloat(savedTotal);
+        totalDisplay.textContent = totalEarned.toFixed(2);
+      }
+      const savedLogs = JSON.parse(localStorage.getItem("lazyLogs") || "[]");
+      savedLogs.forEach(log => {
+        const li = document.createElement("li");
+        li.textContent = log;
+        logList.appendChild(li);
+      });
+    });
+
+    // ✅ 自動儲存月薪
+    salaryInput.addEventListener("input", () => {
+      const val = parseFloat(salaryInput.value);
+      if (!isNaN(val) && val > 0) localStorage.setItem("savedSalary", val);
+    });
+
+    // 理由選擇
+    reasonButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        reasonButtons.forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedReason = btn.dataset.reason;
+        reasonDisplay.textContent = selectedReason;
+      });
+    });
+
+    // 自訂理由
+    customReasonBtn.addEventListener("click", () => {
+      const input = prompt("請輸入自訂理由");
+      if (input && input.trim()) {
+        reasonButtons.forEach(b => b.classList.remove("selected"));
+        selectedReason = `😏其他（${input.trim()}）`;
+        reasonDisplay.textContent = selectedReason;
+      }
+    });
+
+    // 時間格式
+    function getNow24H() {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, "0");
+      return `${pad(now.getFullYear())}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    }
+
+    // 開始 / 結束 偷懶
+    startBtn.onclick = () => {
+      if (!isRunning) {
+        const salary = parseFloat(salaryInput.value);
+        if (isNaN(salary) || salary <= 0) {
+          alert("請輸入有效月薪！");
+          return;
+        }
+        perMs = salary / (160 * 60 * 60 * 1000);
+        elapsedMs = 0;
+        isRunning = true;
+        startBtn.textContent = "結束偷懶";
+        timer = setInterval(() => {
+          elapsedMs += 100;
+          timeDisplay.textContent = (elapsedMs / 1000).toFixed(1);
+          amountDisplay.textContent = (elapsedMs * perMs).toFixed(2);
+        }, 100);
+      } else {
+        clearInterval(timer);
+        isRunning = false;
+        startBtn.textContent = "開始偷懶";
+        const earned = (elapsedMs * perMs).toFixed(2);
+        totalEarned += parseFloat(earned);
+        totalDisplay.textContent = totalEarned.toFixed(2);
+        const reasonText = reasonDisplay.textContent || "無";
+        const log = `${getNow24H()} - 偷懶 ${(elapsedMs / 1000).toFixed(1)} 秒，賺了 NT$${earned}，理由：${reasonText}`;
+        const li = document.createElement("li");
+        li.textContent = log;
+        logList.prepend(li);
+        const logs = JSON.parse(localStorage.getItem("lazyLogs") || "[]");
+        logs.unshift(log);
+        localStorage.setItem("lazyLogs", JSON.stringify(logs));
+        localStorage.setItem("totalEarned", totalEarned.toFixed(2));
+      }
+    };
+
+    // 匯出資料
+    exportBtn.onclick = () => {
+      const data = {
+        savedSalary: localStorage.getItem("savedSalary"),
+        totalEarned: localStorage.getItem("totalEarned"),
+        lazyLogs: JSON.parse(localStorage.getItem("lazyLogs") || "[]")
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `薪水小偷備份_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    // 匯入資料
+    importBtn.onclick = () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "application/json";
+      input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const data = JSON.parse(reader.result);
+            if (data.savedSalary) localStorage.setItem("savedSalary", data.savedSalary);
+            if (data.totalEarned) localStorage.setItem("totalEarned", data.totalEarned);
+            if (data.lazyLogs) localStorage.setItem("lazyLogs", JSON.stringify(data.lazyLogs));
+            alert("✅ 匯入成功！請重新整理頁面。");
+          } catch {
+            alert("❌ 匯入失敗：檔案格式錯誤。");
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    };
+
+    // 清除資料
+    clearBtn.onclick = () => {
+      const confirmText = prompt("請輸入『確認清除』以刪除所有資料");
+      if (confirmText === "確認清除") {
+        logList.innerHTML = "";
+        timeDisplay.textContent = "0.0";
+        amountDisplay.textContent = "0.00";
+        totalDisplay.textContent = "0.00";
+        reasonDisplay.textContent = "";
+        salaryInput.value = "";
+        selectedReason = "";
+        totalEarned = 0;
+        reasonButtons.forEach(b => b.classList.remove("selected"));
+        localStorage.removeItem("savedSalary");
+        localStorage.removeItem("lazyLogs");
+        localStorage.removeItem("totalEarned");
+        alert("資料已清除！");
+      } else {
+        alert("取消清除，請輸入正確確認文字。");
+      }
+    };
+
+    // ✅ PWA Service Worker 註冊
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('✅ Service Worker 已註冊'))
-        .catch(err => console.error('❌ Service Worker 註冊失敗', err));
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('✅ Service Worker 註冊成功:', reg.scope))
+          .catch(err => console.error('❌ Service Worker 註冊失敗:', err));
+      });
     }
   </script>
 </body>
