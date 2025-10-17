@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>薪水小偷計時器</title>
+  <meta name="theme-color" content="#ffcc00" />
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #fffdf5;
+      color: #333;
+      padding: 1em;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 3em;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 0.3em;
+    }
+    .total {
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 1em;
+      text-align: center;
+    }
+    label, input, button {
+      font-size: 1.2em;
+      margin: 0.5em 0;
+    }
+    input {
+      padding: 0.4em;
+      width: 100%;
+      max-width: 300px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 0.6em 1.2em;
+      background-color: #ffcc00;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #ffdb4d;
+    }
+    .reason-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5em;
+      margin: 0.1em 0;
+    }
+    .reason-buttons button {
+      background-color: #eee;
+      border: 1px solid #aaa;
+      border-radius: 10px;
+      width: 120px;
+    }
+    .reason-buttons button.selected {
+      background-color: #ffd966;
+      border-color: #ff9900;
+    }
+    .metrics {
+      text-align: left;
+      margin: 1em 0;
+    }
+    .metrics p {
+      font-size: 2em;
+      font-weight: bold;
+      margin: 0.3em 0;
+    }
+    .log {
+      max-width: 500px;
+      margin: 2em auto;
+      font-size: 1em;
+      text-align: center;
+    }
+    .log h3 {
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+    }
+    .log ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .log li {
+      margin-bottom: 0.5em;
+    }
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.8em;
+      }
+      .metrics p {
+        font-size: 1.2em;
+      }
+      button {
+        font-size: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>👻 薪水小偷</h1>
+  <br>
+  <div class="total">💰 累計總金額：NT$<span id="total">0.00</span></div>
+
+  <label>月薪（NT$）：<input type="number" id="salary" /></label>
+  <button id="start">開始偷懶</button>
+
+  <div>
+    <p>偷懶理由：</p>
+    <div class="reason-buttons">
+      <button data-reason="💩大便">💩大便</button>
+      <button data-reason="😴睡覺">😴睡覺</button>
+      <button data-reason="🧋午茶">🧋午茶</button>
+      <button id="customReasonBtn">✏️ 其他</button>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <p>⏱️ 時間：<span id="time">0.0</span> 秒</p>
+    <p>💸 金額：NT$<span id="amount">0.00</span></p>
+    <p>📋 理由：<span id="reasonDisplay"></span></p>
+  </div>
+
+  <button id="clear">🗑️ 清除資料</button>
+
+  <div class="log">
+    <h3>偷懶紀錄</h3>
+    <ul id="logList"></ul>
+  </div>
+
+  <script>
+    let selectedReason = "";
+    let timer = null;
+    let elapsedMs = 0;
+    let perMs = 0;
+    let isRunning = false;
+    let totalEarned = 0;
+
+    const salaryInput = document.getElementById("salary");
+    const startBtn = document.getElementById("start");
+    const clearBtn = document.getElementById("clear");
+    const timeDisplay = document.getElementById("time");
+    const amountDisplay = document.getElementById("amount");
+    const totalDisplay = document.getElementById("total");
+    const reasonDisplay = document.getElementById("reasonDisplay");
+    const reasonButtons = document.querySelectorAll(".reason-buttons button[data-reason]");
+    const customReasonBtn = document.getElementById("customReasonBtn");
+    const logList = document.getElementById("logList");
+
+    // ✅ 自動載入儲存的月薪
+    salaryInput.value = localStorage.getItem("savedSalary") || "";
+
+    reasonButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        reasonButtons.forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedReason = btn.dataset.reason;
+        reasonDisplay.textContent = selectedReason;
+      });
+    });
+
+    customReasonBtn.addEventListener("click", () => {
+      const input = prompt("請輸入自訂理由");
+      if (input && input.trim()) {
+        reasonButtons.forEach(b => b.classList.remove("selected"));
+        selectedReason = `😏其他（${input.trim()}）`;
+        reasonDisplay.textContent = selectedReason;
+      }
+    });
+
+    function getNow24H() {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, "0");
+      return `${pad(now.getFullYear())}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    }
+
+    startBtn.onclick = () => {
+      if (!isRunning) {
+        const salary = parseFloat(salaryInput.value);
+        if (isNaN(salary) || salary <= 0) {
+          alert("請輸入有效月薪！");
+          return;
+        }
+
+        const reasonText = selectedReason || "";
+        reasonDisplay.textContent = reasonText;
+        perMs = salary / (160 * 60 * 60 * 1000);
+        elapsedMs = 0;
+        isRunning = true;
+        startBtn.textContent = "結束偷懶";
+
+        timer = setInterval(() => {
+          elapsedMs += 100;
+          timeDisplay.textContent = (elapsedMs / 1000).toFixed(1);
+          amountDisplay.textContent = (elapsedMs * perMs).toFixed(2);
+        }, 100);
+      } else {
+        clearInterval(timer);
+        isRunning = false;
+        startBtn.textContent = "開始偷懶";
+
+        const earned = (elapsedMs * perMs).toFixed(2);
+        totalEarned += parseFloat(earned);
+        totalDisplay.textContent = totalEarned.toFixed(2);
+
+        const reasonText = reasonDisplay.textContent;
+        const log = `${getNow24H()} - 偷懶 ${(elapsedMs / 1000).toFixed(1)} 秒，賺了 NT$${earned}，理由：${reasonText}`;
+        const li = document.createElement("li");
+        li.textContent = log;
+        logList.prepend(li);
+      }
+    };
+
+    clearBtn.onclick = () => {
+      const confirmText = prompt("請輸入『確認清除』以刪除所有資料");
+      if (confirmText === "確認清除") {
+        logList.innerHTML = "";
+        timeDisplay.textContent = "0.0";
+        amountDisplay.textContent = "0.00";
+        totalDisplay.textContent = "0.00";
+        reasonDisplay.textContent = "";
+        salaryInput.value = "";
+        selectedReason = "";
+        totalEarned = 0;
+        reasonButtons.forEach(b => b.classList.remove("selected"));
+        localStorage.removeItem("savedSalary");
+        alert("資料已清除！");
+      } else {
+        alert("取消清除，
