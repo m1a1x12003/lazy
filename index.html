@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>薪水小偷計時器</title>
-  <meta name="theme-color" content="#ffcc00" />
-  <link rel="manifest" href="manifest.json" />
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
@@ -61,7 +59,6 @@
       background-color: #eee;
       border: 1px solid #aaa;
       border-radius: 10px;
-      width: 120px;
     }
     .reason-buttons button.selected {
       background-color: #ffd966;
@@ -120,7 +117,7 @@
     <div class="reason-buttons">
       <button data-reason="💩大便">💩大便</button>
       <button data-reason="😴睡覺">😴睡覺</button>
-      <button data-reason="🧋午茶">🧋午茶</button>
+      <button data-reason="🧋下午茶">🧋午茶</button>
       <button id="customReasonBtn">✏️ 其他</button>
     </div>
   </div>
@@ -156,9 +153,6 @@
     const reasonButtons = document.querySelectorAll(".reason-buttons button[data-reason]");
     const customReasonBtn = document.getElementById("customReasonBtn");
     const logList = document.getElementById("logList");
-
-    // ✅ 自動載入儲存的月薪
-    salaryInput.value = localStorage.getItem("savedSalary") || "";
 
     reasonButtons.forEach(btn => {
       btn.addEventListener("click", () => {
@@ -233,7 +227,11 @@
         selectedReason = "";
         totalEarned = 0;
         reasonButtons.forEach(b => b.classList.remove("selected"));
-        localStorage.removeItem("savedSalary");
         alert("資料已清除！");
       } else {
-        alert("取消清除，
+        alert("取消清除，請輸入正確確認文字。");
+      }
+    };
+  </script>
+</body>
+</html>
